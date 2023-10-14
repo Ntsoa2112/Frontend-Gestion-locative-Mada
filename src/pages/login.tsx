@@ -39,7 +39,6 @@ const Login: NextPage = () => {
         email,
         password
       })
-
       if (response.status === 200) {
         router.push(getRedirect())
       }

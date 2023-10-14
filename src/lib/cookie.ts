@@ -6,7 +6,7 @@ export function serializeCookie(
   value: unknown,
   options?: CookieSerializeOptions,
 ) {
-  const stringValue = typeof value === 'object' ? `j:${JSON.stringify(value)}` : String(value)
+  const stringValue = typeof value === 'object' ? `${JSON.stringify(value)}` : String(value)
 
   const cookieOptions = { ...options }
 

@@ -13,6 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       first_name: firstName,
       last_name: lastName
     })
+    axios.create({
+      headers: {
+        Authorization: `Bearer ${response.data.access_token}`,
+      }
+    })
     const cookie = serializeCookie('auth', {
       "ownerId": response.data.ownerId,
       "access_token": response.data.access_token
