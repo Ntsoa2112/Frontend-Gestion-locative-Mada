@@ -29,6 +29,12 @@ Le frontend de l'application Gestion locative Mada est l'interface utilisateur q
 2. **React-Bootstrap** : React-Bootstrap est une bibliothèque d'interface utilisateur qui fournit des composants React réutilisables pour la création d'interfaces modernes et réactives.
 3. **Formulaires avec Formik** : Formik est une bibliothèque de gestion de formulaires en React qui simplifie la création et la validation des formulaires.
 
+## Tâches restantes
+
+1. Ajouter une indication de chargement lors de l'attente après avoir cliqué sur les boutons
+2. Mettre en place la fonctionnalité de modification du profil
+3. Ajouter des statistiques
+
 ## Installations
 
 ```
