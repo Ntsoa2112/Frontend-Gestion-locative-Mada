@@ -1,13 +1,23 @@
-import { faCode, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import AddPropertyModal from '@components/Modal/AddPropertyModal'
+import DeletePropertyModal from '@components/Modal/DeletePropertyModal'
+import EditPropertyModal from '@components/Modal/EditPropertyModal'
+import InfoPropertyModal from '@components/Modal/InfoPropertyModal'
+import { faCode, faEllipsisVertical, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import formatDate from '@lib/formatDate'
 import { Property } from '@models/property'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Card, Dropdown } from 'react-bootstrap'
+import { Button, Card, Dropdown } from 'react-bootstrap'
 
 function Properties() {
     const [properties, setProperties] = useState<Property[] | null>(null)
+    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+    const [showModal, setShowModal] = useState(false)
+    const [showEditModal, setShowEditModal] = useState(false)
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [updateProperties, setUpdateProperties] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
     const handleProperty = async() => {
         try {
             const reponse = await axios.get('api/property/listByOwner')
@@ -15,18 +25,35 @@ function Properties() {
         } catch (error) {
             setProperties(null)
         }
-      
+    }
+    const handleInfoClick = (property: Property) => {
+      setSelectedProperty(property)
+      setShowModal(true)
+    }
+    const handleEditClick = (property: Property) => {
+      setSelectedProperty(property)
+      setShowEditModal(true)
+    }
+    const handleDeleteClick = (property: Property) => {
+      setSelectedProperty(property)
+      setShowDeleteModal(true)
+    }
+    const handleAddProperty = () => {
+      setShowAddModal(true)
     }
     useEffect(() => {
       handleProperty()
-    }, [])
+    }, [updateProperties])
   return (
     <div className="row">
     <div className="col-md-12">
       <Card>
-        <Card.Header>
-        My properties
-        </Card.Header>
+      <Card.Header className="d-flex justify-content-between align-items-center">
+            My properties
+            <Button variant="link" onClick={() => handleAddProperty()}>
+              <FontAwesomeIcon icon={faPlus} />
+            </Button>
+          </Card.Header>
         <Card.Body>
           <div className="table-responsive">
             <table className="table border mb-0">
@@ -88,12 +115,12 @@ function Properties() {
                                     <FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
                                 </Dropdown.Toggle>
 
-                                <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Info</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">Edit</Dropdown.Item>
+                                <Dropdown.Menu align='start'>
+                                    <Dropdown.Item onClick={() => handleInfoClick(property)}>Info</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => handleEditClick(property)}>Edit</Dropdown.Item>
                                     <Dropdown.Item
-                                    className="text-danger"
-                                    href="#/action-3"
+                                      className="text-danger"
+                                      onClick={() => handleDeleteClick(property)}
                                     >
                                     Delete
                                     </Dropdown.Item>
@@ -104,6 +131,37 @@ function Properties() {
                         ))
                     ) : null
                 }
+                {
+                  selectedProperty && (
+                    <>
+                      <InfoPropertyModal
+                        showModal={showModal}
+                        setShowModal={setShowModal}
+                        selectedProperty={selectedProperty}
+                      />
+                      <EditPropertyModal
+                        showModal={showEditModal}
+                        setShowModal={setShowEditModal}
+                        selectedProperty={selectedProperty}
+                        updateProperties={updateProperties}
+                        setUpdateProperties={setUpdateProperties}
+                      />
+                      <DeletePropertyModal
+                        property={selectedProperty}
+                        showModalDelete={showDeleteModal}
+                        setModalDelete={setShowDeleteModal}
+                        updateProperties={updateProperties}
+                        setUpdateProperties={setUpdateProperties}
+                      />
+                    </>
+                  )
+                }
+                <AddPropertyModal
+                  showModal={showAddModal}
+                  setShowModal={setShowAddModal}
+                  updateProperties={updateProperties}
+                  setUpdateProperties={setUpdateProperties}
+                />
               </tbody>
             </table>
           </div>
