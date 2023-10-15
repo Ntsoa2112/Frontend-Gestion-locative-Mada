@@ -25,7 +25,7 @@ Le frontend de l'application Gestion locative Mada est l'interface utilisateur q
 
 ## Technologies
 
-1. **Next.js ** : Next.js est un framework JavaScript basé sur React utilisé pour créer des applications web côté client et côté serveur. Il offre une expérience de développement moderne avec un rendu côté serveur, des routes dynamiques, le pré-rendu statique et bien plus encore.
+1. **Next.js** : Next.js est un framework JavaScript basé sur React utilisé pour créer des applications web côté client et côté serveur. Il offre une expérience de développement moderne avec un rendu côté serveur, des routes dynamiques, le pré-rendu statique et bien plus encore.
 2. **React-Bootstrap** : React-Bootstrap est une bibliothèque d'interface utilisateur qui fournit des composants React réutilisables pour la création d'interfaces modernes et réactives.
 3. **Formulaires avec Formik** : Formik est une bibliothèque de gestion de formulaires en React qui simplifie la création et la validation des formulaires.
 
