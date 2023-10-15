@@ -50,7 +50,7 @@ export default function SidebarNav() {
       <SidebarNavItem icon={faDroplet} href="/tenants">
         Tenants
       </SidebarNavItem>
-      <SidebarNavItem icon={faFileLines} href="/tenants/client">
+      <SidebarNavItem icon={faFileLines} href="/tenants/sentInvoice">
         Sent invoice
       </SidebarNavItem>
     </ul>

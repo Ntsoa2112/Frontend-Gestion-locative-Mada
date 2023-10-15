@@ -3,7 +3,6 @@ import { serializeCookie } from '@lib'
 import axios from 'axios'
 
 const urlLogin = `${process.env.NEXT_PUBLIC_API_MADA_LOCATIVE}/auth/login` || ''
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email, password } = req.body
   try {
