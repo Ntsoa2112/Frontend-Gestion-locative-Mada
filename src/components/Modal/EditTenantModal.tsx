@@ -1,7 +1,7 @@
 import { TenantProperty } from '@models/property'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import { Modal, Button, Form, Spinner } from 'react-bootstrap'
 
 interface EditTenantModalProps {
   showModal: boolean;
@@ -20,12 +20,14 @@ const EditTenantModal: React.FC<EditTenantModalProps> = ({
 }) => {
   const [editedTenant, setEditedTenant] = useState<TenantProperty | null>(null)
   const [errorEdit, setErrorEdit] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setEditedTenant(selectedTenant)
   }, [selectedTenant])
 
   const handleEdit = async () => {
+    setIsLoading(true)
     if (editedTenant) {
       try {
         const response = await axios.patch(`api/tenant/editTenant`, {
@@ -44,6 +46,8 @@ const EditTenantModal: React.FC<EditTenantModalProps> = ({
         }
       } catch (error) {
         setErrorEdit(`Error updating tenant: ${error}`)
+      } finally {
+        setIsLoading(false)
       }
     }
   }
@@ -131,9 +135,17 @@ const EditTenantModal: React.FC<EditTenantModalProps> = ({
         <Button variant="secondary" onClick={() => setShowModal(false)}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleEdit}>
-          Save Changes
-        </Button>
+        {!isLoading ? (
+          <Button variant="primary" onClick={handleEdit} style={{ width: '50%' }}>
+            Save Changes
+          </Button>
+        ) : (
+          <div className="d-flex justify-content-center w-50">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        )}
       </Modal.Footer>
     </Modal>
   )

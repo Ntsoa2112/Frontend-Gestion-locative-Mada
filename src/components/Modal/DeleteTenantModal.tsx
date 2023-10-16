@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Modal, Button, Alert, ListGroup } from 'react-bootstrap'
+import { Modal, Button, Alert, ListGroup, Spinner } from 'react-bootstrap'
 import { TenantProperty } from '@models/property'
 import axios from 'axios'
 
@@ -19,6 +19,7 @@ const DeleteTenantModal: React.FC<DeleteTenantModalProps> = ({
   setUpdateTenants
 }) => {
   const [errorDelete, setErrorDelete] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const renderTenantInfo = () => (
     <ListGroup variant="flush">
@@ -31,6 +32,7 @@ const DeleteTenantModal: React.FC<DeleteTenantModalProps> = ({
   )
 
   const handleDelete = async () => {
+    setIsLoading(true)
     try {
       const response = await axios.delete(`api/tenant/deleteTenant?id_tenant=${selectedTenant.tenant.id_tenant}`)
 
@@ -40,6 +42,8 @@ const DeleteTenantModal: React.FC<DeleteTenantModalProps> = ({
       }
     } catch (error) {
       setErrorDelete(`Deletion error: This tenant is currently associated with a property`)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -65,9 +69,17 @@ const DeleteTenantModal: React.FC<DeleteTenantModalProps> = ({
         }}>
           Cancel
         </Button>
-        <Button variant="danger" onClick={handleDelete}>
-          Delete
-        </Button>
+        {!isLoading ? (
+          <Button variant="danger" onClick={handleDelete} style={{ width: '25%' }}>
+            Delete
+          </Button>
+        ) : (
+          <div className="d-flex justify-content-center w-25">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        )}
       </Modal.Footer>
     </Modal>
   )

@@ -8,7 +8,7 @@ import formatDate from '@lib/formatDate'
 import { Property } from '@models/property'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Dropdown } from 'react-bootstrap'
+import { Button, Card, Dropdown, Spinner } from 'react-bootstrap'
 
 function Properties() {
     const [properties, setProperties] = useState<Property[] | null>(null)
@@ -18,13 +18,18 @@ function Properties() {
     const [showAddModal, setShowAddModal] = useState(false)
     const [updateProperties, setUpdateProperties] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const handleProperty = async() => {
-        try {
-            const reponse = await axios.get('api/property/listByOwner')
-            setProperties(reponse.data)
-        } catch (error) {
-            setProperties(null)
-        }
+      setIsLoading(true)
+      try {
+          const reponse = await axios.get('api/property/listByOwner')
+          setProperties(reponse.data)
+      } catch (error) {
+          setProperties(null)
+      } finally {
+        setIsLoading(false)
+      }
+      
     }
     const handleInfoClick = (property: Property) => {
       setSelectedProperty(property)
@@ -71,6 +76,7 @@ function Properties() {
               </thead>
               <tbody>
                 {
+                    // eslint-disable-next-line no-nested-ternary
                     properties && properties.length ? (
                         properties.map((property, index) => (
                         <tr className="align-middle" key={property.id_property}>
@@ -129,7 +135,19 @@ function Properties() {
                             </td>
                         </tr>
                         ))
-                    ) : null
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="text-center">
+                          {isLoading ? (
+                            <div className="d-flex justify-content-center">
+                              <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                              </Spinner>
+                            </div>
+                          ) : null}
+                        </td>
+                      </tr>  
+                    )
                 }
                 {
                   selectedProperty && (

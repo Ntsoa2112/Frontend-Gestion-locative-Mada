@@ -1,7 +1,7 @@
 import { Property } from '@models/property'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import { Modal, Button, Form, Spinner } from 'react-bootstrap'
 
 interface EditPropertyModalProps {
   showModal: boolean;
@@ -16,11 +16,14 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
 }) => {
   const [editedProperty, setEditedProperty] = useState<Property | null>(null)
   const [errorEdit, setErrorEdit] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     setEditedProperty(selectedProperty)
   }, [selectedProperty])
 
   const handleEdit = async () => {
+    setIsLoading(true)
     if (editedProperty) {
       try {
         const response = await axios.patch(`api/property/editProperty`, editedProperty)
@@ -30,6 +33,8 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
         }
       } catch (error) {
         setErrorEdit(`Error updating property :${error}`)
+      } finally {
+        setIsLoading(false)
       }
     }
   }
@@ -115,9 +120,17 @@ const EditPropertyModal: React.FC<EditPropertyModalProps> = ({
         <Button variant="secondary" onClick={() => setShowModal(false)}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleEdit}>
-          Save Changes
-        </Button>
+        {!isLoading ? (
+          <Button variant="primary" onClick={handleEdit} style={{ width: '50%' }}>
+            Save Changes
+          </Button>
+        ) : (
+          <div className="d-flex justify-content-center w-50">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        )}
       </Modal.Footer>
     </Modal>
   )

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import { Modal, Button, Form, Spinner } from 'react-bootstrap'
 import axios from 'axios'
 import { Property } from '@models/property'
 
@@ -22,11 +22,12 @@ const AddTenantModal: React.FC<AddTenantModalProps> = ({
     postal_address: '',
     email: '',
     telephone: '',
-    id_property: '', // Ajout d'un champ pour stocker l'ID de la propriété associée
+    id_property: '',
   })
 
   const [propertiesWithoutTenant, setPropertiesWithoutTenant] = useState<Property[]>([])
-
+  const [errorAdd, setErrorAdd] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     const fetchPropertiesWithoutTenant = async () => {
       try {
@@ -38,11 +39,9 @@ const AddTenantModal: React.FC<AddTenantModalProps> = ({
     }
 
     fetchPropertiesWithoutTenant()
-  }, [showModal]) // Appel uniquement au montage du composant
-
-  const [errorAdd, setErrorAdd] = useState<string | null>(null)
-
+  }, [showModal])
   const handleAdd = async () => {
+    setIsLoading(true)
     try {
       const response = await axios.post('api/tenant/addTenant', newTenant)
       if (response) {
@@ -59,6 +58,8 @@ const AddTenantModal: React.FC<AddTenantModalProps> = ({
       }
     } catch (error) {
       setErrorAdd(`Error adding tenant: ${error}`)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -155,9 +156,17 @@ const AddTenantModal: React.FC<AddTenantModalProps> = ({
         <Button variant="secondary" onClick={() => setShowModal(false)}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleAdd}>
-          Add Tenant
-        </Button>
+        {!isLoading ? (
+          <Button variant="primary" onClick={handleAdd} style={{ width: '50%' }}>
+            Add Tenant
+          </Button>
+        ) : (
+          <div className="d-flex justify-content-center w-50">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        )}
       </Modal.Footer>
     </Modal>
   )

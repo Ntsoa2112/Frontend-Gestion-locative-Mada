@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Modal, Button, Alert, ListGroup } from 'react-bootstrap'
+import { Modal, Button, Alert, ListGroup, Spinner } from 'react-bootstrap'
 import { Property } from '@models/property'
 import axios from 'axios'
 
@@ -18,6 +18,7 @@ const DeletePropertyModal: React.FC<DeletePropertyModalProps> = ({
   updateProperties, setUpdateProperties
 }) => {
     const [errorDelete, setErrorDelete] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
     const renderPropertyInfo = () => (
         <ListGroup variant="flush">
           <ListGroup.Item>Type: {property.type}</ListGroup.Item>
@@ -27,17 +28,20 @@ const DeletePropertyModal: React.FC<DeletePropertyModalProps> = ({
         </ListGroup>
     )
     const handleDelete = async () => {
-        try {
-            const response = await axios.delete(`api/property/deleteProperty?id_property=${property.id_property}`)
+      setIsLoading(true)
+      try {
+          const response = await axios.delete(`api/property/deleteProperty?id_property=${property.id_property}`)
 
-            if (response) {
-                setUpdateProperties(!updateProperties)
-                setModalDelete(false)
-            }
-          } catch (error) {
-            setErrorDelete(`Deletion error: This property is currently rented by a tenant`)
+          if (response) {
+              setUpdateProperties(!updateProperties)
+              setModalDelete(false)
           }
-    }
+        } catch (error) {
+          setErrorDelete(`Deletion error: This property is currently rented by a tenant`)
+      } finally {
+          setIsLoading(false)
+      }
+  }
 
   return (
     <Modal show={showModalDelete} onHide={() => {
@@ -61,9 +65,17 @@ const DeletePropertyModal: React.FC<DeletePropertyModalProps> = ({
         }}>
           Cancel
         </Button>
-        <Button variant="danger" onClick={handleDelete}>
-          Delete
-        </Button>
+        {!isLoading ? (
+          <Button variant="danger" onClick={handleDelete} style={{ width: '25%' }}>
+            Delete
+          </Button>
+        ) : (
+          <div className="d-flex justify-content-center w-25">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        )}
       </Modal.Footer>
     </Modal>
   )

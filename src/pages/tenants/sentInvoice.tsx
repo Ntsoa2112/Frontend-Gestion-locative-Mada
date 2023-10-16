@@ -4,7 +4,7 @@ import { AdminLayout } from '@layout'
 import formatDate from '@lib/formatDate'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Button, Card } from 'react-bootstrap'
+import { Button, Card, Spinner } from 'react-bootstrap'
 import { RentByOwner } from '@models/property'
 import ModalInvoice from '@components/Modal/InfoInvoiceSent'
 
@@ -12,13 +12,17 @@ function Rental() {
   const [invoices, setInvoices] = useState<RentByOwner[] | null>(null)
   const [selectedInvoice, setSelectedInvoice] = useState<RentByOwner | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleGetInvoices = async () => {
+    setIsLoading(true)
     try {
       const response = await axios.get('/api/rental/sent')
       setInvoices(response.data)
     } catch (error) {
       console.error('Error fetching invoices:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -100,7 +104,19 @@ function Rental() {
 
                         </tr>
                         ))
-                    ) : null
+                    ) :  (
+                      <tr>
+                        <td colSpan={6} className="text-center">
+                          {isLoading ? (
+                            <div className="d-flex justify-content-center">
+                              <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                              </Spinner>
+                            </div>
+                          ) : null}
+                        </td>
+                      </tr>  
+                    )
                 }
                 {
                   selectedInvoice && (

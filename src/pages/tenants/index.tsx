@@ -9,7 +9,7 @@ import formatDate from '@lib/formatDate'
 import { TenantProperty } from '@models/property'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Dropdown } from 'react-bootstrap'
+import { Button, Card, Dropdown, Spinner } from 'react-bootstrap'
 
 function TenantList() {
     const [tenants, setTenants] = useState<TenantProperty[] | null>(null)
@@ -19,13 +19,17 @@ function TenantList() {
     const [showAddModal, setShowAddModal] = useState(false)
     const [updateTenants, setUpdateTenants] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const handleTenant = async() => {
-        try {
-            const reponse = await axios.get('api/tenant/list')
-            setTenants(reponse.data)
-        } catch (error) {
-            setTenants(null)
-        }
+      setIsLoading(true)
+      try {
+          const reponse = await axios.get('api/tenant/list')
+          setTenants(reponse.data)
+      } catch (error) {
+          setTenants(null)
+      } finally {
+        setIsLoading(false)
+      }
     }
     const handleInfoClick = (Tenant: TenantProperty) => {
       setSelectedTenant(Tenant)
@@ -131,7 +135,19 @@ function TenantList() {
                             </td>
                         </tr>
                         ))
-                    ) : null
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="text-center">
+                          {isLoading ? (
+                            <div className="d-flex justify-content-center">
+                              <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                              </Spinner>
+                            </div>
+                          ) : null}
+                        </td>
+                      </tr>  
+                    )
                 }
                 {
                   selectedTenant && (
