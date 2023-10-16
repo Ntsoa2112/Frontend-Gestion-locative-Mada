@@ -32,10 +32,9 @@ Le frontend de l'application Gestion locative Mada est l'interface utilisateur q
 
 ## Tâches restantes
 
-1. Ajouter une indication de chargement lors de l'attente après avoir cliqué sur les boutons
-2. Mettre en place la fonctionnalité de modification du profil
-3. Ajouter des statistiques
-4. Amélioration du template mail
+1. Mettre en place la fonctionnalité de modification du profil
+2. Ajouter des statistiques
+3. Amélioration du template mail
 
 ## Installations
 
